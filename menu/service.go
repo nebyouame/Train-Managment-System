@@ -1,9 +1,8 @@
 package menu
 
-import "github.com/betsegawlemma/web-prog-lab-05-mem/entity"
+import "TrainSystem/entity"
 
-// CategoryService specifies food menu category related services
 type ScheduleService interface {
-	Schedule(id int) (*entity.Schedule, error)
-	StoreSchedule(category *entity.Schedule) error
+	Schedule(id int)(*entity.Schedule, error)
+	StoreSchedule(schedule *entity.Schedule) error
 }
