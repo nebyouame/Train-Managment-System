@@ -3,46 +3,40 @@ package main
 import (
 	"TrainSystem/entity"
 	"TrainSystem/menu/service"
+
 	"html/template"
 	"net/http"
-	"strconv"
+
 )
 
 var templ = template.Must(template.ParseGlob("delivery/web/templates/*"))
-var scheduleCache service.ScheduleCache
+var scheduleService *service.ScheduleService
 
 func index(w http.ResponseWriter, r *http.Request) {
 
-	idRaw := r.URL.Query().Get("id")
-	id, err := strconv.Atoi(idRaw)
-	if err != nil {
-		id = 1
-	}
-	cat, err := scheduleCache.Schedule(id)
+	Schedule, err := scheduleService.Schedules()
 	if err != nil {
 		panic(err)
 	}
-	templ.ExecuteTemplate(w, "index.layout", cat)
-}
-func Schedule(w http.ResponseWriter, r *http.Request){
-	templ.ExecuteTemplate(w, "Schedule.layout", nil)
+	templ.ExecuteTemplate(w, "index.layout", Schedule)
 }
 
+
 func init(){
-	scheduleCache = service.NewSchduleCache()
-	Train1 := entity.Schedule{ID: 1, TrainSource: "From Source1", TrainDestination: "To destination2", Image: "train.png"}
-	Train2 := entity.Schedule{ID: 2, TrainSource: "From Source2", TrainDestination: "To destination3", Image: "ggg.png"}
-	Train3 := entity.Schedule{ID: 3, TrainSource: "From Source3", TrainDestination: "To destination1", Image: "ggg.png"}
-	scheduleCache.StoreSchedule(&Train1)
-	scheduleCache.StoreSchedule(&Train2)
-	scheduleCache.StoreSchedule(&Train3)
+	scheduleService = service.NewScheduleService("catagory.csv")
+
+	schedules := []entity.Schedule{
+		entity.Schedule{ID: 1, TrainSource: "From s1", TrainDestination: "TO D2", Image: "train.png"},
+		entity.Schedule{ID: 2, TrainSource: "From s2", TrainDestination: "TO D3", Image: "train.png"},
+		}
+	scheduleService.StoreSchedules(schedules)
 }
 
 func main() {
 	fs := http.FileServer(http.Dir("delivery/web/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 	http.HandleFunc("/", index)
-	http.HandleFunc("/Schedule", Schedule)
+	
 	http.ListenAndServe(":8181", nil)
 }
 
