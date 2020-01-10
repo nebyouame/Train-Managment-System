@@ -24,6 +24,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 	templ.ExecuteTemplate(w, "index.layout", cat)
 }
+func Schedule(w http.ResponseWriter, r *http.Request){
+	templ.ExecuteTemplate(w, "Schedule.layout", nil)
+}
 
 func init(){
 	scheduleCache = service.NewSchduleCache()
@@ -39,7 +42,7 @@ func main() {
 	fs := http.FileServer(http.Dir("delivery/web/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 	http.HandleFunc("/", index)
-	
+	http.HandleFunc("/Schedule", Schedule)
 	http.ListenAndServe(":8181", nil)
 }
 
