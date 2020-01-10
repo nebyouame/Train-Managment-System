@@ -1,53 +1,28 @@
 package service
 
 import (
-	"encoding/csv"
-	"errors"
-	"os"
-	"strconv"
 	"TrainSystem/entity"
+	"errors"
 )
 
-type ScheduleService struct {
-	FileName string
+
+type ScheduleCache map[int]*entity.Schedule
+
+func NewSchduleCache() ScheduleCache{
+	return make(map[int]*entity.Schedule)
 }
 
-func NewScheduleService(fileName string) *ScheduleService {
-	return &ScheduleService{FileName:fileName}
-}
-func (cs ScheduleService) Categories() ([]entity.Schedule, error) {
-	file, err := os.Open(cs.FileName)
-	if err != nil {
-		return nil, errors.New("File could not be open")
+func(c ScheduleCache) Schedule(id int)(*entity.Schedule, error){
+	if cat, ok := c[id]; ok {
+		return cat, nil
 	}
-	defer file.Close()
-	reader := csv.NewReader(file)
-	reader.FieldsPerRecord = -1
-	record, err := reader.ReadAll()
-	if err != nil {
-		return nil, errors.New("File could not be open")
-	}
-	var ctgs []entity.Schedule
-	for _, item := range record {
-		id, _ := strconv.ParseInt(item[0], 0, 0)
-		c := entity.Schedule{ID: int(id), TrainSource: item[1],
-			TrainDestination: item[2], Image: item[3]}
-		ctgs = append(ctgs, c)
-	}
-	return ctgs, nil
+	return nil, errors.New("Catagory was not found")
 }
 
-func (cs ScheduleService) StoreCategories(ctgs []entity.Schedule) error {
-	csvFile, err := os.Create(cs.FileName)
-	if err != nil {
-		return errors.New("File could not be created")
+func (c ScheduleCache) StoreSchedule(Schedule *entity.Schedule) error {
+	if _, ok := c[Schedule.ID]; !ok {
+		c[Schedule.ID]= Schedule
+		return nil
 	}
-	defer csvFile.Close()
-	writer := csv.NewWriter(csvFile)
-	for _, c := range ctgs {
-		line := []string{strconv.Itoa(c.ID), c.TrainSource, c.TrainDestination, c.Image}
-		writer.Write(line)
-	}
-	writer.Flush()
-	return nil
+	return errors.New("Catagory already exists")
 }
