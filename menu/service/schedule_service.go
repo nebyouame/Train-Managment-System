@@ -15,7 +15,7 @@ type ScheduleService struct {
 func NewScheduleService(fileName string) *ScheduleService {
 	return &ScheduleService{FileName:fileName}
 }
-func (cs ScheduleService) Schedules() ([]entity.Schedule, error) {
+func (cs ScheduleService) Categories() ([]entity.Schedule, error) {
 	file, err := os.Open(cs.FileName)
 	if err != nil {
 		return nil, errors.New("File could not be open")
@@ -37,7 +37,7 @@ func (cs ScheduleService) Schedules() ([]entity.Schedule, error) {
 	return ctgs, nil
 }
 
-func (cs ScheduleService) StoreSchedules(ctgs []entity.Schedule) error {
+func (cs ScheduleService) StoreCategories(ctgs []entity.Schedule) error {
 	csvFile, err := os.Create(cs.FileName)
 	if err != nil {
 		return errors.New("File could not be created")
