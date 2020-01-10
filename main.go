@@ -1,18 +1,38 @@
 package main
 
 import (
+	"TrainSystem/entity"
+	"TrainSystem/menu/service"
+
 	"html/template"
 	"net/http"
 
 )
 
 var templ = template.Must(template.ParseGlob("delivery/web/templates/*"))
+var scheduleService *service.ScheduleService
 
-func index(w http.ResponseWriter, r *http.Request){
-	templ.ExecuteTemplate(w, "index.layout", nil)
+func index(w http.ResponseWriter, r *http.Request) {
+
+	Schedule, err := scheduleService.Schedules()
+	if err != nil {
+		panic(err)
+	}
+	templ.ExecuteTemplate(w, "index.layout", Schedule)
 }
 func Schedule(w http.ResponseWriter, r *http.Request){
 	templ.ExecuteTemplate(w, "Schedule.layout", nil)
+}
+
+func init(){
+	scheduleService = service.NewScheduleService("catagory.csv")
+
+	schedules := []entity.Schedule{
+		entity.Schedule{ID: 1, TrainSource: "From s1", TrainDestination: "TO D2", Image: "train.png"},
+		entity.Schedule{ID: 2, TrainSource: "From s2", TrainDestination: "TO D3", Image: "train.png"},
+		entity.Schedule{ID: 3, TrainSource: "From s3", TrainDestination: "TO D1", Image: "train.png"},
+		}
+	scheduleService.StoreSchedules(schedules)
 }
 
 func main() {
