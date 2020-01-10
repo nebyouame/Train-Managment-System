@@ -1,2 +1,14 @@
-# Train-Managment-System
-Our project, it is the a computerized system of reserving the seats of train seats. facilitates the passenger to book and Cancel tickets, for the reservation of seats and one can easily make reservation and get ticket. 
+## Web Programing Course in GO
+Addis Ababa Institute of Technology, Addis Ababa, Ethiopia
+
+
+Academic Year 2019/20, Semester I
+
+#### web-prog-lab-05
+Architecting Go appliacation
+
+Structuring page layout using Go templating
+
+Using im-memory data storage
+
+
