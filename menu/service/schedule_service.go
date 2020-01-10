@@ -1,9 +1,12 @@
 package service
 
 import (
+	"bytes"
 	"encoding/csv"
+	"encoding/gob"
 	"errors"
 	"os"
+	"io/ioutil"
 	"strconv"
 	"TrainSystem/entity"
 )
@@ -16,38 +19,41 @@ func NewScheduleService(fileName string) *ScheduleService {
 	return &ScheduleService{FileName:fileName}
 }
 func (cs ScheduleService) Schedules() ([]entity.Schedule, error) {
-	file, err := os.Open(cs.FileName)
+
+	raw, err := ioutil.ReadFile(cs.FileName)
 	if err != nil {
 		return nil, errors.New("File could not be open")
 	}
-	defer file.Close()
-	reader := csv.NewReader(file)
-	reader.FieldsPerRecord = -1
-	record, err := reader.ReadAll()
-	if err != nil {
-		return nil, errors.New("File could not be open")
-	}
+	buffer := bytes.NewBuffer(raw)
+
+	dec := gob.NewDecoder(buffer)
+
 	var ctgs []entity.Schedule
-	for _, item := range record {
-		id, _ := strconv.ParseInt(item[0], 0, 0)
-		c := entity.Schedule{ID: int(id), TrainSource: item[1],
-			TrainDestination: item[2], Image: item[3]}
-		ctgs = append(ctgs, c)
+
+	err = dec.Decode(&ctgs)
+
+	if err != nil {
+		return nil, errors.New("Decoding error")
 	}
+
 	return ctgs, nil
 }
 
 func (cs ScheduleService) StoreSchedules(ctgs []entity.Schedule) error {
-	csvFile, err := os.Create(cs.FileName)
+	buffer := new(bytes.Buffer)
+	encoder := gob.NewEncoder(buffer)
+
+	err := encoder.Encode(ctgs)
+
 	if err != nil {
-		return errors.New("File could not be created")
+		return errors.New("Data encoding has failed")
 	}
-	defer csvFile.Close()
-	writer := csv.NewWriter(csvFile)
-	for _, c := range ctgs {
-		line := []string{strconv.Itoa(c.ID), c.TrainSource, c.TrainDestination, c.Image}
-		writer.Write(line)
+
+	err = ioutil.WriteFile(cs.FileName, buffer.Bytes(), 0644)
+
+	if err != nil {
+		return errors.New("Writing to a file has failed")
 	}
-	writer.Flush()
+
 	return nil
 }
