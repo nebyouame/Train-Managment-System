@@ -2,45 +2,55 @@ package main
 
 import (
 	"TrainSystem/entity"
-	"TrainSystem/menu/service"
+	"TrainSystem/train/repository"
+	"TrainSystem/train/service"
+	"database/sql"
+	"strconv"
 
-	"html/template"
 	"net/http"
 
 )
 
-var templ = template.Must(template.ParseGlob("delivery/web/templates/*"))
-var scheduleService *service.ScheduleService
 
-func index(w http.ResponseWriter, r *http.Request) {
+func adminSchedulesDelete(w http.ResponseWriter, r *http.Request){
+	var scheduleService *service.ScheduleService
 
-	Schedule, err := scheduleService.Schedules()
-	if err != nil {
-		panic(err)
+	if r.Method == http.MethodGet{
+
+		idRaw := r.URL.Query().Get("id")
+		id, _ :=strconv.Atoi(idRaw)
+
+		scheduleService.DeleteSchedule(id)
 	}
-	templ.ExecuteTemplate(w, "index.layout", Schedule)
+	http.Redirect(w,r, "/admin/schedules", http.StatusSeeOther)
 }
-func Schedule(w http.ResponseWriter, r *http.Request){
-	templ.ExecuteTemplate(w, "Schedule.layout", nil)
-}
+func adminSchedulesNew(w http.ResponseWriter, r * http.Request){
+	if r.Method == http.MethodPost{
 
-func init(){
-	scheduleService = service.NewScheduleService("catagory.csv")
+		sch := entity.Schedule{}
+		sch.TrainSource = r.FormValue("TrainSource")
+		sch.TrainDestination= r.FormValue("TrainDestination")
 
-	schedules := []entity.Schedule{
-		entity.Schedule{ID: 1, TrainSource: "From s1", TrainDestination: "TO D2", Image: "train.png"},
-		entity.Schedule{ID: 2, TrainSource: "From s2", TrainDestination: "TO D3", Image: "train.png"},
-		entity.Schedule{ID: 3, TrainSource: "From s3", TrainDestination: "TO D1", Image: "train.png"},
-		}
-	scheduleService.StoreSchedules(schedules)
+		scheduleService.StoreCatagory(sch)
+	}
+		http.Redirect(w,r, "/admin/schedules", http.StatusSeeOther)
 }
 
 func main() {
-	fs := http.FileServer(http.Dir("delivery/web/assets"))
-	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
-	http.HandleFunc("/", index)
-	http.HandleFunc("/Schedule", Schedule)
-	http.ListenAndServe(":8181", nil)
+	dbconn, err := sql.Open("postgres", "postgres://app_admin:P@$$wordD2@localhost/traindb")
+
+	if err != nil {
+		panic(err)
+	}
+	defer dbconn.Close()
+
+	schRepo := repository.NewScheduleRepositoryImp1(dbconn)
+	schServ := service.NewScheduleService(schRepo)
+
+	http.HandleFunc("/admin/schedules/delete", adminSchedulesDelete)
+	http.HandleFunc("admin/schedules/new", adminSchedulesNew)
 }
+
+
 
 
