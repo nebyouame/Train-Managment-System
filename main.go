@@ -48,6 +48,7 @@ func main() {
 	schServ := service.NewScheduleService(schRepo)
 
 	http.HandleFunc("/admin/schedules/delete", adminSchedulesDelete)
+	http.HandleFunc("admin/schedules/new", adminSchedulesNew)
 }
 
 
