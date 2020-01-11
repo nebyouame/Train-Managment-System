@@ -1,53 +1,94 @@
 package service
 
 import (
-	"encoding/csv"
-	"errors"
-	"os"
-	"strconv"
 	"TrainSystem/entity"
+	"TrainSystem/train"
 )
 
 type ScheduleService struct {
-	FileName string
+	scheduleRepo train.ScheduleRepository
 }
 
-func NewScheduleService(fileName string) *ScheduleService {
-	return &ScheduleService{FileName:fileName}
-}
-func (cs ScheduleService) Schedules() ([]entity.Schedule, error) {
-	file, err := os.Open(cs.FileName)
-	if err != nil {
-		return nil, errors.New("File could not be open")
-	}
-	defer file.Close()
-	reader := csv.NewReader(file)
-	reader.FieldsPerRecord = -1
-	record, err := reader.ReadAll()
-	if err != nil {
-		return nil, errors.New("File could not be open")
-	}
-	var ctgs []entity.Schedule
-	for _, item := range record {
-		id, _ := strconv.ParseInt(item[0], 0, 0)
-		c := entity.Schedule{ID: int(id), TrainSource: item[1],
-			TrainDestination: item[2], Image: item[3]}
-		ctgs = append(ctgs, c)
-	}
-	return ctgs, nil
+func NewScheduleService(SatRepo train.ScheduleRepository) train.ScheduleService {
+	return &ScheduleService{scheduleRepo: SatRepo}
 }
 
-func (cs ScheduleService) StoreSchedules(ctgs []entity.Schedule) error {
-	csvFile, err := os.Create(cs.FileName)
-	if err != nil {
-		return errors.New("File could not be created")
+func (ss *ScheduleService) Schedules() ([]entity.Schedule, []error){
+	schedules, errs := ss.scheduleRepo.Schedules()
+
+	if len(errs) > 0 {
+		return nil, errs
 	}
-	defer csvFile.Close()
-	writer := csv.NewWriter(csvFile)
-	for _, c := range ctgs {
-		line := []string{strconv.Itoa(c.ID), c.TrainSource, c.TrainDestination, c.Image}
-		writer.Write(line)
-	}
-	writer.Flush()
-	return nil
+	return schedules, nil
 }
+
+func(ss *ScheduleService) StoreSchedule(schedule *entity.Schedule) (*entity.Schedule, []error){
+	sat, errs := ss.scheduleRepo.StoreSchedule(schedule)
+	if len(errs) > 0 {
+		return nil, errs
+	}
+	return sat,nil
+}
+
+func (ss *ScheduleService) Schedule(id uint) (*entity.Schedule, []error){
+	c, errs := ss.scheduleRepo.Schedule(id)
+	if len(errs) > 0 {
+		return nil, errs
+	}
+	return c, nil
+}
+
+func(ss *ScheduleService) UpdateSchedule(schedule *entity.Schedule) (*entity.Schedule, []error){
+	sat, errs := ss.scheduleRepo.UpdateSchedule(schedule)
+	if len(errs) > 0 {
+		return nil, errs
+	}
+	return sat, nil
+}
+
+func (ss *ScheduleService) DeleteSchedule(id uint) (*entity.Schedule, []error){
+	sat, errs := ss.scheduleRepo.DeleteSchedule(id)
+	if len(errs) > 0 {
+		return nil, errs
+	}
+	return sat, nil
+}
+func (ss *ScheduleService) ItemsInSchedule(schedule *entity.Schedule) ([]entity.Item, []error){
+	sts, errs := ss.scheduleRepo.ItemInSchedule(schedule)
+	if len(errs) > 0 {
+		return nil, errs
+	}
+	return sts, nil
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
