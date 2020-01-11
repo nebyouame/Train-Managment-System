@@ -1,19 +1,23 @@
 {{ define "index.content"}}
     <div class="jumbotron jumbotron-fluid">
         <div class="container">
-            <h1 class="display-4">Welcome to our Train system</h1>
-            <p class="lead">You wil find the best services related to our stations.</p>
+            <h1 class="display-4">Train Station</h1>
+            <p class="lead">Welcome to our train station service</p>
         </div>
     </div>
+    <hr>
     <div class="container">
-        <div class="card border-light shadow-sm" style="width: 18rem;">
-            <img src="/assets/img/{{ .Image }}" class="card-img-top" />
-            <div class="card-body">
-                <h4 class="card-title">{{ .Name }}</h4>
-                <p class="card-text"> {{ .Description }} </p>
-                <img src="/assets/img/{{ .Image }}" />
-                <a href="#" class="card-link">Check Schedule</a>
-            </div>
+        <div class="card-deck mb-3 text-center">
+            {{ range . }}
+                <div class="card border-light shadow-sm">
+                    <img src="/assets/img/{{ .Image }}" class="card-img-top" />
+                    <div class="card-body">
+                        <h4 class="card-title">{{ .TrainSource }}</h4>
+                        <p class="card-text"> {{ .TrainDestination }} </p>
+                        <a href="#" class="card-link">Check Schedule</a>
+                    </div>
+                </div>
+            {{ end }}
         </div>
     </div>
 {{ end }}
