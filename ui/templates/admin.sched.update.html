@@ -1,0 +1,45 @@
+{{ define "admin.sched.update.layout" }}
+    {{ template "admin.navbar" . }}
+    {{ template "admin.sched.update.content" . }}
+    {{ template "admin.footer" . }}
+{{ end }}
+
+{{ define "admin.sched.update.content"}}
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h2>Update Order</h2>
+        </div>
+        <div class="container">
+            <form method="POST" action="/admin/schedules/update" enctype="multipart/form-data">
+                <input type="hidden" name="id" value="{{ .ID }}" />
+                <input type="hidden" name="image" value="{{ .Image }}" />
+                <div class="form-group row">
+                    <label for="TrainSource" class="col-sm-2 col-form-label">TrainSource</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="TrainSource" id="TrainSource" placeholder="TrainSource" value="{{ if .TrainSource }} {{ .TrainSource }} {{ end }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="TrainDestination" class="col-sm-2 col-form-label">TrainDestination</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" name="TrainDestination" id="TrainDestination">{{ if .TrainDestination }} {{ .TrainDestination }} {{ end }}</textarea>
+                    </div>
+                </div>
+                <div class="col-sm-10">
+                    <img src="/assets/img/{{ .Image }}" width="80px" height="80px" />
+                </div>
+                <div class="form-group">
+                    <label for="trainimg" class="col-sm-2 col-form-label">Upload New Image</label>
+                    <div class="col-sm-10">
+                        <input type="file" class="form-control-file" name="trainimg" id="trainimg">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <button type="submit" class="btn btn-primary float-right">Update Schedule</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+{{ end }}

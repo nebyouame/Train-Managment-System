@@ -1,0 +1,31 @@
+{{ define "index.layout" }}
+
+    {{ template "navbar" . }}
+    {{ template "index.content" . }}
+    {{ template "footer" . }}
+
+{{ end }}
+
+{{ define "index.content"}}
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Train Station</h1>
+            <p class="lead">Welcome to our train station service</p>
+        </div>
+    </div>
+    <hr>
+    <div class="container">
+        <div class="card-deck mb-3 text-center">
+            {{ range . }}
+                <div class="card border-light shadow-sm">
+                    <img src="/assets/img/{{ .Image }}" class="card-img-top" />
+                    <div class="card-body">
+                        <h4 class="card-title">{{ .TrainSource }}</h4>
+                        <p class="card-text"> {{ .TrainDestination }} </p>
+                        <a href="#" class="card-link">Check Schedule</a>
+                    </div>
+                </div>
+            {{ end }}
+        </div>
+    </div>
+{{ end }}
