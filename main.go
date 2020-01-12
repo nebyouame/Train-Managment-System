@@ -1,56 +1,48 @@
 package main
 
 import (
+	"TrainSystem/delivery/http/handler"
 	"TrainSystem/entity"
 	"TrainSystem/train/repository"
 	"TrainSystem/train/service"
-	"database/sql"
-	"strconv"
-
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"html/template"
 	"net/http"
-
 )
 
-
-func adminSchedulesDelete(w http.ResponseWriter, r *http.Request){
-	var scheduleService *service.ScheduleService
-
-	if r.Method == http.MethodGet{
-
-		idRaw := r.URL.Query().Get("id")
-		id, _ :=strconv.Atoi(idRaw)
-
-		scheduleService.DeleteSchedule(id)
+func createTables(dbconn *gorm.DB) []error {
+	errs := dbconn.CreateTable(&entity.Item{}, &entity.Schedule{}, &entity.Role{}, &entity.User{})
+	if errs !=nil{
+		panic(errs)
 	}
-	http.Redirect(w,r, "/admin/schedules", http.StatusSeeOther)
+	return nil
 }
-func adminSchedulesNew(w http.ResponseWriter, r * http.Request){
-	if r.Method == http.MethodPost{
-
-		sch := entity.Schedule{}
-		sch.TrainSource = r.FormValue("TrainSource")
-		sch.TrainDestination= r.FormValue("TrainDestination")
-
-		scheduleService.StoreCatagory(sch)
-	}
-		http.Redirect(w,r, "/admin/schedules", http.StatusSeeOther)
-}
-
-func main() {
-	dbconn, err := sql.Open("postgres", "postgres://app_admin:P@$$wordD2@localhost/traindb")
-
+func main(){
+	dbconn, err := gorm.Open("postgres", "postgres://postgres:Ermi12345@localhost/traindb?sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
 	defer dbconn.Close()
 
-	schRepo := repository.NewScheduleRepositoryImp1(dbconn)
-	schServ := service.NewScheduleService(schRepo)
+	templ := template.Must(template.ParseGlob("TrainSystem/ui/templates/*"))
 
-	http.HandleFunc("/admin/schedules/delete", adminSchedulesDelete)
-	http.HandleFunc("admin/schedules/new", adminSchedulesNew)
+	serviceRepo := repository.NewScheduleGormRepo(dbconn)
+	serviceServ := service.NewScheduleService(serviceRepo)
+
+	adminSchgHandler := handler.NewAdminScheduleHandler(templ, serviceServ)
+	trainHandler := handler.NewTrainHandler(templ, serviceServ)
+
+
+	fs := http.FileServer(http.Dir("ui/assets"))
+	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
+
+	http.HandleFunc("/", trainHandler.Index)
+	http.HandleFunc("/train", trainHandler.Train)
+	http.HandleFunc("/admin/schedules", adminSchgHandler.AdminSchedules)
+	http.HandleFunc("/admin/schedules/new", adminSchgHandler.AdminSchedulesNew)
+	http.HandleFunc("/admin/schedules/update", adminSchgHandler.AdminSchedulesUpdate)
+	http.HandleFunc("/admin/schedules/delete", adminSchgHandler.AdminSchedulesDelete)
+
+	http.ListenAndServe(":8181", nil)
 }
-
-
-
-
