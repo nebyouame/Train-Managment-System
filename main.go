@@ -26,7 +26,7 @@ func main() {
 	}
 	defer dbconn.Close()
 
-	createTable(dbconn)
+
 
 	tmp1 := template.Must(template.ParseGlob("ui/templates/*"))
 
