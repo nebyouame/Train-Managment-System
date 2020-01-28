@@ -9,4 +9,12 @@ var ScheduleMock = Schedule{
 }
 
 
-
+var InfoMock = Info {
+	ID: 1,
+	TrainSource: "Mock Info 01",
+	Price: 100.0,
+	TrainDestination: "Mock Info 01 Destination",
+	Schedules: []Schedule{},
+	Image: "mock_info.png",
+	Paths: []Path{},
+}
