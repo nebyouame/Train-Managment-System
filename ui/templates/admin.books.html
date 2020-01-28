@@ -1,24 +1,24 @@
-{{ define "admin.sched.layout" }}
+{{ define "admin.books.layout" }}
     {{ template "admin.navbar" . }}
-    {{ template "admin.sched.content" . }}
+    {{ template "admin.books.content" . }}
     {{ template "admin.footer" . }}
 {{ end }}
 
-{{ define "admin.sched.content"}}
+{{ define "admin.books.content"}}
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
         <div
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h2>Train Schedules</h2>
+            <h2>Book services</h2>
         </div>
         <div class="pt-3 pb-2 mb-3">
-            <a class="btn btn-primary btn-lg" href="/admin/schedules/new" role="button">New Schedule</a>
+            <a class="btn btn-primary btn-lg" href="/admin/books/new" role="button">Book</a>
         </div>
         <table class="table table-striped">
             <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">TrainSource</th>
-                <th scope="col">TrainDestination</th>
+                <th scope="col">UserID</th>
+                <th scope="col">InfoID</th>
                 <th scope="col">Image</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
@@ -28,11 +28,11 @@
             {{ range . }}
                 <tr>
                     <th scope="row"> {{ .ID }} </th>
-                    <td> {{ .TrainSource }} </td>
-                    <td> {{ .TrainDestination }} </td>
+                    <td> {{ .UserID }} </td>
+                    <td> {{ .InfoID }} </td>
                     <td> <img src="/assets/img/{{ .Image }}" width="70rem" height="70rem" /> </td>
-                    <td> <a href="/admin/schedules/update?id={{ .ID }}">Edit</a> </td>
-                    <td> <a href="/admin/schedules/delete?id={{ .ID }}">Delete</a> </td>
+                    <td> <a href="/admin/books/update?id={{ .ID }}">Edit</a> </td>
+                    <td> <a href="/admin/books/delete?id={{ .ID }}">Delete</a> </td>
                 </tr>
             {{ end }}
             </tbody>

@@ -1,0 +1,40 @@
+{{ define "admin.books.new.layout" }}
+    {{ template "admin.navbar" . }}
+    {{ template "admin.books.new.content" . }}
+    {{ template "admin.footer" . }}
+{{ end }}
+
+{{ define "admin.books.new.content"}}
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h2>Add New Book Service</h2>
+        </div>
+        <div class="container">
+            <form method="POST" action="/admin/books/new" enctype="multipart/form-data">
+                <div class="form-group row">
+                    <label for="userID" class="col-sm-2 col-form-label">Users ID</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="userID" id="userID" placeholder="User ID">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="infoID" class="col-sm-2 col-form-label">Info ID</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" name="infoID" id="infoID" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bookimg" class="col-sm-2 col-form-label">Upload Image</label>
+                    <div class="col-sm-10">
+                        <input type="file" class="form-control-file" name="bookimg" id="bookimg">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <button type="submit" class="btn btn-primary float-right">Add Category</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+{{ end }}

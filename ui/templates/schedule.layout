@@ -1,0 +1,7 @@
+{{ define "Schedule.layout" }}
+
+{{ template "navbar" . }}
+{{ template "Schedule.content" . }}
+{{ template "footer" . }}
+
+{{ end }}
