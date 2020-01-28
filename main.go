@@ -36,14 +36,16 @@ func main() {
 	userRepo := repository.NewUserGormRepo(dbconn)
 	userServ := service.NewUserService(userRepo)
 
-	
+
+	bookRepo := repository.NewBookGormRepo(dbconn)
+	bookServ := service.NewBookService(bookRepo)
 
 	adminSatHandler := handler.NewAdminScheduleHandler(tmp1, scheduleServ)
 	scheduleHandler := handler.NewScheduleHandler(tmp1, scheduleServ)
 
 	adminUserHandler := handler.NewAdminUserHandler(tmp1, userServ)
 
-
+	adminBookHandler := handler.NewAdminBookHandler(tmp1, bookServ)
 
 	fs := http.FileServer(http.Dir("ui/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
@@ -63,6 +65,12 @@ func main() {
 	http.HandleFunc("/admin/users/new", adminUserHandler.AdminUsersNew)
 	http.HandleFunc("/admin/users/update", adminUserHandler.AdminUsersUpdate)
 	http.HandleFunc("/admin/users/delete", adminUserHandler.AdminUsersDelete)
+
+	http.HandleFunc("/admin/books", adminBookHandler.AdminBooks)
+	http.HandleFunc("/admin/books/new", adminBookHandler.AdminBooksNew)
+	http.HandleFunc("/admin/books/update", adminBookHandler.AdminBooksUpdate)
+	http.HandleFunc("/admin/books/delete", adminBookHandler.AdminBooksDelete)
+
 
 	http.ListenAndServe(":8181", nil)
 
