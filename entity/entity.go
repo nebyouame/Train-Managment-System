@@ -12,6 +12,14 @@ type Schedule struct {
 
 
 
+type Path struct {
+	ID uint
+	TrainSource string `gorm:"type:varchar(255)"`
+	TrainDestination string
+}
+
+
+
 
 
 
