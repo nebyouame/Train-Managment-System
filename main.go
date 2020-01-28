@@ -1,14 +1,17 @@
 package main
 
 import (
+
 	"TrainProject/entity"
 	"TrainProject/schedule/repository"
 	"TrainProject/schedule/service"
 	"TrainProject/travel/http/handler"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+
 	"html/template"
 	"net/http"
+
 )
 
 func createTable(dbconn *gorm.DB) []error {
@@ -42,6 +45,8 @@ func main() {
 	bookRepo := repository.NewBookGormRepo(dbconn)
 	bookServ := service.NewBookService(bookRepo)
 
+
+
 	adminSatHandler := handler.NewAdminScheduleHandler(tmp1, scheduleServ)
 	scheduleHandler := handler.NewScheduleHandler(tmp1, scheduleServ)
 
@@ -50,6 +55,10 @@ func main() {
 	adminRoleHandler := handler.NewAdminRoleHandler(tmp1, roleServ)
 
 	adminBookHandler := handler.NewAdminBookHandler(tmp1, bookServ)
+
+
+
+
 
 	fs := http.FileServer(http.Dir("ui/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
@@ -80,6 +89,7 @@ func main() {
 	http.HandleFunc("/admin/books/new", adminBookHandler.AdminBooksNew)
 	http.HandleFunc("/admin/books/update", adminBookHandler.AdminBooksUpdate)
 	http.HandleFunc("/admin/books/delete", adminBookHandler.AdminBooksDelete)
+
 
 
 	http.ListenAndServe(":8181", nil)
