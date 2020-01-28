@@ -35,10 +35,20 @@ func main() {
 
 	
 
+	roleRepo := repository.NewRoleGormRepo(dbconn)
+	roleServ := service.NewRoleService(roleRepo)
+
+	
+
 	adminSatHandler := handler.NewAdminScheduleHandler(tmp1, scheduleServ)
 	scheduleHandler := handler.NewScheduleHandler(tmp1, scheduleServ)
 
 	
+
+	adminRoleHandler := handler.NewAdminRoleHandler(tmp1, roleServ)
+
+
+
 	fs := http.FileServer(http.Dir("ui/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
@@ -51,6 +61,15 @@ func main() {
 	http.HandleFunc("/admin/schedules/new", adminSatHandler.AdminSchedulesNew)
 	http.HandleFunc("/admin/schedules/update", adminSatHandler.AdminSchedulesUpdate)
 	http.HandleFunc("/admin/schedules/delete", adminSatHandler.AdminSchedulesDelete)
+
+
+
+	http.HandleFunc("/admin/roles", adminRoleHandler.AdminRoles)
+	http.HandleFunc("/admin/roles/new", adminRoleHandler.AdminRolesNew)
+	http.HandleFunc("/admin/roles/update", adminRoleHandler.AdminRolesUpdate)
+	http.HandleFunc("/admin/roles/delete", adminRoleHandler.AdminRolesDelete)
+
+	
 
 
 	http.ListenAndServe(":8181", nil)
